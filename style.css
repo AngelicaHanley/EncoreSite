@@ -1,21 +1,19 @@
 :root {
-    --primary: #ff24b1;
-    --secondary:#16e8f4;
     --teal: #35D6D0;
-    --lightBlack: #17131f;
-    --grey: #393143;
-    --offWhite: rgb(234, 250, 255);
-    --lightPrimary: #fff0fa;
-    --lightSecondary: #d8f8ff;
-    --black: #111018;
     --pink: #F45CB7;
-    --lightPink: #f0a4d1;
+    --purple: #A88BFA;
+
+    --lightBlack: #211c2c;
+    --grey: #393143;
+    --offWhite: rgb(184, 196, 200);
+    --black: #111018;
+    --white: #F8F5FF;
 }
 
 body {
     font-family: Helvetica, Arial, Verdana, sans-serif;
     min-height: 100vh;
-    color: whitesmoke;
+    color: var(--white);
     margin: 0px;
     padding: 0px;
     display: flex;
@@ -27,7 +25,7 @@ header {
     background-color: var(--lightBlack);
     display: flex;
     justify-content: space-between;
-    padding: 20px clamp(50px, 10vw, 150px);
+    padding: 20px clamp(20px, 10vw, 150px);
     border-bottom: 3px solid var(--grey);
     align-items: center;
 }
@@ -38,7 +36,7 @@ a {
 
 .appTitle {
     font-size: 25px;
-    color: whitesmoke;
+    color: var(--white);
     text-decoration: none;
     font-size: clamp(15px, 2.5vw,25px);
     font-weight: bold;
@@ -54,7 +52,7 @@ a {
 
 a.header__link {
     text-decoration: none;
-    color: var(--teal);
+    color: var(--pink);
     cursor: pointer;
     padding: 10px clamp(5px,1.5vw,15px);
 }
@@ -67,8 +65,8 @@ a.header__link:hover {
 
 .header__link--active {
     border-radius: 20px;
-    border: 2px solid var(--pink);
-    
+    border: 2px solid var(--purple);
+    color: var(--teal) !important;
 }
 
 main {
@@ -78,11 +76,13 @@ main {
     align-items: flex-start;
     width: auto;
     padding: 20px clamp(50px, 10vw, 150px);
+    flex: 1;
 }
 
 h1 {
     color: var(--pink);
-    font-size: clamp(20px, 4vw, 50px);
+    font-size: clamp(30px, 4vw, 50px);
+    margin: 0px;
 }
 
 .miniHeader {
@@ -91,4 +91,95 @@ h1 {
     letter-spacing: 2px;
     text-transform: uppercase;
     font-weight: bold;
+    margin-top: 30px;
+    /*margin-left: clamp(10px,3.4vw,50px);*/
+}
+
+.starIcon {
+    color: var(--purple);
+    width: clamp(10px,3vw,30px);
+    height: clamp(10px,3vw,30px);
+    display: inline-block;
+    padding-bottom: 3px;
+    stroke: var(--teal);
+    stroke-width: 1.5px;
+}
+
+h2 {
+    color: var(--offWhite);
+    font-size: clamp(15px, 1.5vw, 20px);
+    /*margin-left: clamp(10px,3.4vw,50px);*/
+    font-weight: 1;
+}
+
+.concertForm {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    padding: 20px 0px;
+}
+
+.formBox{
+    width: clamp(100px,60vw,600px);
+    height: 50px;
+    background-color: var(--lightBlack);
+    border: 2px solid var(--grey);
+    border-radius: 10px;
+    padding: 10px;
+    font-size: clamp(14px, 1.5vw, 30px);
+    margin-right: 30px;
+}
+
+.formButton{
+    height: auto;
+    padding: 15px 20px;
+    font-size: clamp(12px, 1.4vw, 15px);
+    background-color: var(--teal);
+    color: var(--grey);
+    border: 2px solid var(--grey);
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: clamp(18px, 1.8vw, 25px);
+}
+
+
+
+
+
+
+
+
+footer {
+    background-color: var(--lightBlack);;
+    color: var(--white);
+    text-align: center;
+    padding: 5px;
+    border-top: 3px solid var(--grey);
+}
+
+@media screen and (max-width: 600px){
+    .concertForm {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        width: 100%;
+        padding: 20px 0px;
+    }
+    .formBox{
+        width: 100%;
+        font-size: clamp(18px, 1.8vw, 25px);
+    }
+    .formButton{
+        margin-top: 10px;
+        font-size: clamp(15px, 1.6vw, 25px);
+        width: 100%;
+        border-radius: 5px;
+    }
 }
