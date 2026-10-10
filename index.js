@@ -1,6 +1,10 @@
 //API key: BHiDDr29kRGAiicdtwFIvIM20Hmg9Bzr
 //https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&countryCode=US&size=5&apikey=BHiDDr29kRGAiicdtwFIvIM20Hmg9Bzr
 
+//variables
+const concertGrid = document.querySelector('.concertGrid')
+let concerts = {}
+
 /*Using Template Literals Here! ! !*/
 function createConcertCard(concert){
     /*Destructing Concert Object Here! ! !*/
@@ -24,8 +28,8 @@ function createConcertCard(concert){
             <p>${location}</p>
 
             <div class="concertCard__buttons">
-                <button>I'm Going</button>
-                <button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heartIcon">
+                <button class="goingButton" data-id="${id}">I'm Going</button>
+                <button class="wantToGoButton" data-id="${id}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heartIcon">
                     <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
                     </svg>
                     Want to Go</button>
@@ -63,7 +67,7 @@ async function fetchConcerts(artist){
             events = []
         }
 
-        const concerts = events.map(event => {
+        concerts = events.map(event => {
             //edge cases code
             let date
             let venue
@@ -122,7 +126,6 @@ async function fetchConcerts(artist){
 
 const displayConcerts = (concerts) => {
     const concertSection = document.querySelector('.concertResults')
-    const concertGrid = document.querySelector('.concertGrid')
     //clearing previous grid
     concertGrid.innerHTML = "";
 
@@ -156,3 +159,19 @@ function formatDate(myDate) {
         day: 'numeric'
     });
 }
+
+//event listener for going and want to go buttons, connected to concert grid so listens to all buttons
+concertGrid.addEventListener('click',function(e){
+    //e.target identifies the element that was clicked
+    const goingButton = e.target.closest('.goingButton')
+    const wantToGoButton = e.target.closest('.wantToGoButton')
+   
+    if(goingButton){
+        console.log("im going button clicked!")
+        console.log(goingButton.dataset.id)
+   }
+   if(wantToGoButton){
+        console.log("i WANT to go button clicked!")
+        console.log(wantToGoButton.dataset.id)
+   }
+})
