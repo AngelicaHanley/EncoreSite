@@ -48,7 +48,7 @@ async function fetchConcerts(artist){
         const data = await response.json();
 
         //if there is an _embedded there we get the data
-        let events;
+        let events
         if(data._embedded){
             events = data._embedded.events;
         } else{
@@ -56,12 +56,51 @@ async function fetchConcerts(artist){
         }
 
         const concerts = events.map(event => {
+            //edge cases code
+            let date
+            let venue
+            let image
+            let city
+            
+
+            if (event.images && event.images.length > 4) {
+                image = event.images[4].url;
+            } else if (event.images && event.images.length > 0) {
+                image = event.images[0].url;
+            } else {
+                image = "images/concertPlaceholder.jpg";
+            }
+
+            if(event.dates && event.dates.start && event.dates.start.localDate){
+                date = formatDate(event.dates.start.localDate)
+            } else {
+                date = "Date TBA"
+            }
+
+
+            if(event._embedded && event._embedded.venues && event._embedded.venues.length > 0){
+                if(event._embedded.venues[0].name){
+                    venue = event._embedded.venues[0].name
+                } else{
+                    venue = "Venue TBA"
+                }
+
+                if(event._embedded.venues[0].city && event._embedded.venues[0].city.name){
+                    city = event._embedded.venues[0].city.name
+                } else{
+                    city = ""
+                }
+            } else{
+               venue = "Venue TBA" 
+               city = ""
+            }
+
             return {
                 name: event.name,
-                date: event.dates.start.localDate,
-                venue: event._embedded.venues[0].name,
-                city: event._embedded.venues[0].city.name,
-                image: event.images[4].url,
+                date: date,
+                venue: venue,
+                city: city,
+                image: image,
                 id: event.id,
             };
         });
@@ -97,4 +136,15 @@ const displayConcerts = (concerts) => {
     for (const concert of concerts) {
         concertGrid.insertAdjacentHTML('beforeend',createConcertCard(concert))
     }
+}
+
+function formatDate(myDate) {
+    const [year, month, day] = myDate.split('-');
+    const date = new Date(year, month - 1, day);
+
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
 }
