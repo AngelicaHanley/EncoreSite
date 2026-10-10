@@ -92,7 +92,6 @@ h1 {
     text-transform: uppercase;
     font-weight: bold;
     margin-top: 30px;
-    /*margin-left: clamp(10px,3.4vw,50px);*/
 }
 
 .starIcon {
@@ -108,7 +107,6 @@ h1 {
 h2 {
     color: var(--offWhite);
     font-size: clamp(15px, 1.5vw, 20px);
-    /*margin-left: clamp(10px,3.4vw,50px);*/
     font-weight: 1;
 }
 
@@ -130,6 +128,7 @@ h2 {
     padding: 10px;
     font-size: clamp(14px, 1.5vw, 30px);
     margin-right: 30px;
+    color: var(--white)
 }
 
 .formButton{
@@ -148,10 +147,32 @@ h3 {
     font-size: clamp(18px, 1.8vw, 25px);
 }
 
+.concertGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-items: center;
+    gap: 20px;
+}
+.heartIcon {
+    color: var(--pink);
+    width: clamp(5px,1.5vw,30px);
+    height: clamp(5px,1.5vw,30px);
+    display: inline-block;
+    padding-bottom: 3px;
+    stroke: var(--teal);
+    stroke-width: 1.5px;
+    padding: 0px;
+}
+.concertCard__image{
+    width: clamp(100px, 28vw, 340px);;
+    height: clamp(100px, 20vw, 200px);
+}
 
-
-
-
+.noneMessage {
+    color: var(--teal);
+    font-size: clamp(15px, 1.5vw, 20px);
+    font-weight: 1;
+}
 
 
 
@@ -176,10 +197,22 @@ footer {
         width: 100%;
         font-size: clamp(18px, 1.8vw, 25px);
     }
-    .formButton{
+    .searchButton{
         margin-top: 10px;
         font-size: clamp(15px, 1.6vw, 25px);
         width: 100%;
         border-radius: 5px;
+    }
+    .concertCard__image{
+        width: 200px;
+        height: 150px;
+    }
+}
+
+
+@media screen and (max-width: 1200px){
+    .concertGrid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
     }
 }
