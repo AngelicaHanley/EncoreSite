@@ -6,6 +6,14 @@ function createConcertCard(concert){
     /*Destructing Concert Object Here! ! !*/
     const { name, date, venue, city, image, id} = concert;
 
+    //formatting check
+    let location;
+    if(city){
+        location = `${venue} · ${city}`
+    } else{
+        location = venue
+    }
+
     const myHTMLString = 
     `<article class="concertCard">
         <img class="concertCard__image" src="${image}" alt="Concert image">
@@ -13,7 +21,7 @@ function createConcertCard(concert){
         <div class="concertCard__content">
             <h4>${name}</h4>
             <p>${date}</p>
-            <p>${venue} · ${city}</p>
+            <p>${location}</p>
 
             <div class="concertCard__buttons">
                 <button>I'm Going</button>
@@ -68,7 +76,7 @@ async function fetchConcerts(artist){
             } else if (event.images && event.images.length > 0) {
                 image = event.images[0].url;
             } else {
-                image = "images/concertPlaceholder.jpg";
+                image = "images/concertPlaceholder.jpeg";
             }
 
             if(event.dates && event.dates.start && event.dates.start.localDate){
