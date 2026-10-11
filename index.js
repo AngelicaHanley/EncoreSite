@@ -7,22 +7,26 @@ const myConcertsGrid = document.querySelector('#myConcertsGrid')
 const myWishlistGrid = document.querySelector('#wishlistGrid')
 let concerts = []
 let myConcerts = []
-let myFutureConcerts = []
+let myWishlist = []
 //retrieving local storage data
 const savedConcerts = localStorage.getItem('myConcerts')
-const savedFutureConcerts = localStorage.getItem('myFutureConcerts')
+const savedWishlist = localStorage.getItem('myWishlist')
 if(savedConcerts){
     myConcerts = JSON.parse(savedConcerts)
 }
-if(savedFutureConcerts){
-    myFutureConcerts = JSON.parse(savedFutureConcerts)
+if(savedWishlist){
+    myWishlist = JSON.parse(savedWishlist)
 }
 
 
 /*Using Template Literals Here! ! !*/
-function createConcertCard(concert){
+function createConcertCard(concert, page="discover"){
     /*Destructing Concert Object Here! ! !*/
     const { name, date, venue, city, image, id} = concert;
+
+    //check if concert is already saved in either list
+    const existingConcert = myConcerts.find(myConcert => myConcert.id === id)
+    const existingWishlistConcert = myWishlist.find(myConcert => myConcert.id === id)
 
     //formatting check
     let location;
@@ -30,6 +34,34 @@ function createConcertCard(concert){
         location = `${venue} · ${city}`
     } else{
         location = venue
+    }
+
+    let buttonsHTML = ""
+    let goingButtonHTML = ""
+    let wishlistButtonHTML = ""
+    if(page === "discover"){
+        if(existingWishlistConcert){
+            wishlistButtonHTML = `<button class="wantToGoButton" data-id="${id}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heartIcon">
+                    <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052a5.5 5.5 0 0 1 4.313-2.052c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
+                </svg> Want to Go
+            </button>`
+        }else{
+            wishlistButtonHTML = `<button class="wantToGoButton" data-id="${id}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="heartIcon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                </svg> Want to Go
+            </button>`
+        }
+
+        if(existingConcert){
+            goingButtonHTML = `<button class="goingButton" data-id="${id}"><svg class="heartIcon" viewBox="0 -4 24 24" id="meteor-icon-kit__solid-checkmark" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.06066 6.4393C2.47487 5.85355 1.52513 5.85355 0.93934 6.4393C0.353553 7.0251 0.353553 7.9749 0.93934 8.5607L7.93934 15.5607C8.52513 16.1464 9.47487 16.1464 10.0607 15.5607L23.0607 2.56066C23.6464 1.97487 23.6464 1.02513 23.0607 0.43934C22.4749 -0.14645 21.5251 -0.14645 20.9393 0.43934L9 12.3787L3.06066 6.4393z" fill="currentColor"/></svg> I'm Going!</button>`
+        }else{
+            goingButtonHTML = `<button class="goingButton" data-id="${id}">I'm Going</button>`
+        }
+        buttonsHTML = goingButtonHTML + wishlistButtonHTML
+    }else{
+        buttonsHTML = `<button class="removeButton" data-id="${id}">Remove</button>`
     }
 
     const myHTMLString = 
@@ -42,11 +74,7 @@ function createConcertCard(concert){
             <p>${location}</p>
 
             <div class="concertCard__buttons">
-                <button class="goingButton" data-id="${id}">I'm Going</button>
-                <button class="wantToGoButton" data-id="${id}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heartIcon">
-                    <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
-                    </svg>
-                    Want to Go</button>
+                ${buttonsHTML}
             </div>
         </div>
     </article>`
@@ -185,7 +213,16 @@ if(concertGrid){
         const wantToGoButton = e.target.closest('.wantToGoButton')
     //storing concerts in myConcerts in local stoage
         if(goingButton){
-            console.log("im going button clicked!")
+            goingButton.innerHTML = `<svg class="heartIcon" viewBox="0 -4 24 24" id="meteor-icon-kit__solid-checkmark" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.06066 6.4393C2.47487 5.85355 1.52513 5.85355 0.93934 6.4393C0.353553 7.0251 0.353553 7.9749 0.93934 8.5607L7.93934 15.5607C8.52513 16.1464 9.47487 16.1464 10.0607 15.5607L23.0607 2.56066C23.6464 1.97487 23.6464 1.02513 23.0607 0.43934C22.4749 -0.14645 21.5251 -0.14645 20.9393 0.43934L9 12.3787L3.06066 6.4393z" fill="currentColor"/></svg> I'm Going!`
+            
+            //reset the Want to Go button
+            const concertCard = goingButton.closest('.concertCard')
+            const wishlistButtonOnCard = concertCard.querySelector('.wantToGoButton')
+
+            wishlistButtonOnCard.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="heartIcon">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+            </svg> Want to Go`
+
             console.log(goingButton.dataset.id)
             let selectedConcert = concerts.find(concert => concert.id === goingButton.dataset.id)
             console.log("my concert: ", selectedConcert)
@@ -197,46 +234,113 @@ if(concertGrid){
 
             //removing concert from wishlist if it was on there before
             if(selectedConcert){
-                myFutureConcerts = myFutureConcerts.filter(myConcert => myConcert.id !== selectedConcert.id)
+                myWishlist = myWishlist.filter(myConcert => myConcert.id !== selectedConcert.id)
             }
 
             localStorage.setItem('myConcerts', JSON.stringify(myConcerts))
-            localStorage.setItem('myFutureConcerts', JSON.stringify(myFutureConcerts))
+            localStorage.setItem('myWishlist', JSON.stringify(myWishlist))
     }
     if(wantToGoButton){
-            console.log("i WANT to go button clicked!")
+            wantToGoButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heartIcon">
+                <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" /> </svg> Want to Go`
+            
+            //reset the I'm Going button, in case it was clicked before
+            const concertCard = wantToGoButton.closest('.concertCard')
+            const goingButtonOnCard = concertCard.querySelector('.goingButton')
+            goingButtonOnCard.textContent = "I'm Going"
+
             console.log(wantToGoButton.dataset.id)
 
-            let selectedFutureConcert = concerts.find(concert => concert.id === wantToGoButton.dataset.id)
-            console.log("my future concert: ", selectedFutureConcert)
+            let selectedWishlistConcert = concerts.find(concert => concert.id === wantToGoButton.dataset.id)
+            console.log("my wishlist concert: ", selectedWishlistConcert)
 
             //checking if concert was already added (so button clicked before, prevents duplicates)
-            let existingFutureConcert = myFutureConcerts.find(myConcert => myConcert.id === wantToGoButton.dataset.id)
-            if(selectedFutureConcert && !existingFutureConcert){
-                myFutureConcerts.push(selectedFutureConcert)
+            let existingWishlistConcert = myWishlist.find(myConcert => myConcert.id === wantToGoButton.dataset.id)
+            if(selectedWishlistConcert && !existingWishlistConcert){
+                myWishlist.push(selectedWishlistConcert)
             }
 
             //removing concert from myConcerts if wishlist button was pressed after
-            if(selectedFutureConcert){
-                myConcerts = myConcerts.filter(myConcert => myConcert.id !== selectedFutureConcert.id)
+            if(selectedWishlistConcert){
+                myConcerts = myConcerts.filter(myConcert => myConcert.id !== selectedWishlistConcert.id)
             }
 
             localStorage.setItem('myConcerts', JSON.stringify(myConcerts))
-            localStorage.setItem('myFutureConcerts', JSON.stringify(myFutureConcerts))
+            localStorage.setItem('myWishlist', JSON.stringify(myWishlist))
         }
     })
 }
 
-//displaying grid on myConcerts page
+//displaying content on myConcerts page
 if(myConcertsGrid){
-    for (const myConcert of myConcerts) {
-        myConcertsGrid.insertAdjacentHTML('beforeend',createConcertCard(myConcert))
-    } 
+
+    //if there are 0 concerts, display message
+    if(myConcerts.length===0){
+        const noneSavedMessage = document.createElement('p')
+        myConcertsGrid.appendChild(noneSavedMessage)
+        noneSavedMessage.classList.add('noneMessage');
+        noneSavedMessage.textContent = "You haven't saved any concerts yet. Head to Discover to find your next show!"
+    }else{
+        for (const myConcert of myConcerts) {
+            myConcertsGrid.insertAdjacentHTML('beforeend',createConcertCard(myConcert, "myConcerts"))
+        } 
+    }
+    //checking if remove button was clicked
+    myConcertsGrid.addEventListener('click',function(e){
+        const removeButton = e.target.closest('.removeButton')
+        //removing concert from myConcerts, filter keeps every concert except the remove clicked one
+        if(removeButton){
+            myConcerts = myConcerts.filter(myConcert => myConcert.id !== removeButton.dataset.id)
+            //update local storage for myConcerts
+            localStorage.setItem('myConcerts', JSON.stringify(myConcerts))
+            //removing card for concert from HTML
+            removeButton.closest('.concertCard').remove()
+
+            //also does none message if all cards were removed
+            if(myConcerts.length===0){
+            const noneSavedMessage = document.createElement('p')
+            myConcertsGrid.appendChild(noneSavedMessage)
+            noneSavedMessage.classList.add('noneMessage');
+            noneSavedMessage.textContent = "You haven't saved any concerts yet. Head to Discover to find your next show!"
+        }
+        }
+    })
 }
 
-//displaying grid on myWishlist page
+//displaying content on myWishlist page
 if(myWishlistGrid){
-    for (const myFutureConcert of myFutureConcerts) {
-        myWishlistGrid.insertAdjacentHTML('beforeend',createConcertCard(myFutureConcert))
-    } 
+
+    //if there are 0 concerts, display message
+    if(myWishlist.length===0){
+        const noWishlistMessage = document.createElement('p')
+        myWishlistGrid.appendChild(noWishlistMessage)
+        noWishlistMessage.classList.add('noneMessage');
+        noWishlistMessage.textContent = "You haven't saved any concerts to your wishlist yet. Head to Discover to find your next show!"
+    }else{
+        for (const myWishlistConcert of myWishlist) {
+        myWishlistGrid.insertAdjacentHTML('beforeend',createConcertCard(myWishlistConcert, "wishlist"))
+        } 
+    }
+
+    //checking if remove button was clicked
+    myWishlistGrid.addEventListener('click',function(e){
+        const removeButton = e.target.closest('.removeButton')
+        //removing concert from myWishlist, filter keeps every concert except the remove clicked one
+        if(removeButton){
+            myWishlist = myWishlist.filter(myConcert => myConcert.id !== removeButton.dataset.id)
+            //update local storage for myWishlist
+            localStorage.setItem('myWishlist', JSON.stringify(myWishlist))
+            //removing card for concert from HTML
+            removeButton.closest('.concertCard').remove()
+
+            //also does none message if all cards were removed
+            if(myWishlist.length===0){
+            const noWishlistMessage = document.createElement('p')
+            myWishlistGrid.appendChild(noWishlistMessage)
+            noWishlistMessage.classList.add('noneMessage');
+            noWishlistMessage.textContent = "You haven't saved any concerts to your wishlist yet. Head to Discover to find your next show!"
+            }
+        }
+    })
 }
+

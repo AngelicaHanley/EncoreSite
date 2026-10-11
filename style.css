@@ -159,6 +159,7 @@ h3 {
     padding-bottom: 10px;
     margin-bottom: 30px;
     border-radius: 20px;
+    height: clamp(400px, 30vw, 500px);
 }
 
 .concertCard__image{
@@ -200,16 +201,36 @@ h3 {
     display: inline-block;
 }
 .goingButton {
-    width: clamp(50px, 8vw, 200px);
-    padding: 5px clamp(7px, 1vw, 10px);
+    /*width: clamp(50px, 8vw, 200px);*/
+    width: 50%;
+    padding: 5px clamp(7px, 1.2vw, 15px);
     border: 3px solid var(--teal);
     border-radius: 5px;
     font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
 }
 
 .wantToGoButton {
-    width: clamp(50px, 10vw, 200px);
-    padding: 0px clamp(7px, 1vw, 10px);
+    /*width: clamp(50px, 10vw, 200px);*/
+    width: 50%;
+    padding: 0px clamp(7px, 1.2vw, 15px);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+    border: 3px solid var(--purple);
+    border-radius: 5px;
+    font-weight: bold;
+}
+.removeButton {
+    width: 70%;
+    margin-top: 10px;
+    padding: 10px 5px;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -252,6 +273,15 @@ footer {
         width: 200px;
         height: 150px;
     }
+    .concertCard__buttons{
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        justify-content: center;
+    }
+    .concertCard {
+        height: clamp(300px, 60vw, 1500px);
+    }
 }
 
 
@@ -259,5 +289,22 @@ footer {
     .concertGrid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
+    }
+    .concertCard__buttons{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .goingButton {
+        width: 100%;
+        padding: 8px 0px;
+    }
+    .wantToGoButton {
+        width: 100%;
+        padding: 8px 0px;
+    }
+    .concertCard {
+        height: clamp(300px, 54vw, 450px);
     }
 }
