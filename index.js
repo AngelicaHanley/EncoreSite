@@ -2,8 +2,22 @@
 //https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&countryCode=US&size=5&apikey=BHiDDr29kRGAiicdtwFIvIM20Hmg9Bzr
 
 //variables
-const concertGrid = document.querySelector('.concertGrid')
-let concerts = {}
+const concertGrid = document.querySelector('#discoverGrid')
+const myConcertsGrid = document.querySelector('#myConcertsGrid')
+const myWishlistGrid = document.querySelector('#wishlistGrid')
+let concerts = []
+let myConcerts = []
+let myFutureConcerts = []
+//retrieving local storage data
+const savedConcerts = localStorage.getItem('myConcerts')
+const savedFutureConcerts = localStorage.getItem('myFutureConcerts')
+if(savedConcerts){
+    myConcerts = JSON.parse(savedConcerts)
+}
+if(savedFutureConcerts){
+    myFutureConcerts = JSON.parse(savedFutureConcerts)
+}
+
 
 /*Using Template Literals Here! ! !*/
 function createConcertCard(concert){
@@ -41,13 +55,15 @@ function createConcertCard(concert){
 
 //Search button functionality
 const form = document.querySelector('form')
-form.onsubmit = function(e){
+if(form){
+    form.onsubmit = function(e){
     e.preventDefault()
     const input = this.artist.value.trim()
     console.log("input: "+input)
     this.artist.value = ""
     //call search API function here
     fetchConcerts(input)
+    }
 }
 
 async function fetchConcerts(artist){
@@ -160,18 +176,53 @@ function formatDate(myDate) {
     });
 }
 
-//event listener for going and want to go buttons, connected to concert grid so listens to all buttons
-concertGrid.addEventListener('click',function(e){
-    //e.target identifies the element that was clicked
-    const goingButton = e.target.closest('.goingButton')
-    const wantToGoButton = e.target.closest('.wantToGoButton')
-   
-    if(goingButton){
-        console.log("im going button clicked!")
-        console.log(goingButton.dataset.id)
-   }
-   if(wantToGoButton){
-        console.log("i WANT to go button clicked!")
-        console.log(wantToGoButton.dataset.id)
-   }
-})
+//checks if discover concert grid, so this code only runs on that page
+if(concertGrid){
+    //event listener for going and want to go buttons, connected to concert grid so listens to all buttons
+    concertGrid.addEventListener('click',function(e){
+        //e.target identifies the element that was clicked
+        const goingButton = e.target.closest('.goingButton')
+        const wantToGoButton = e.target.closest('.wantToGoButton')
+    //storing concerts in myConcerts in local stoage
+        if(goingButton){
+            console.log("im going button clicked!")
+            console.log(goingButton.dataset.id)
+            let selectedConcert = concerts.find(concert => concert.id === goingButton.dataset.id)
+            console.log("my concert: ", selectedConcert)
+            //checking if concert was already added (so button clicked before, prevents duplicates)
+            let existingConcert = myConcerts.find(myConcert => myConcert.id === goingButton.dataset.id)
+            if(selectedConcert && !existingConcert){
+                myConcerts.push(selectedConcert)
+            }
+            localStorage.setItem('myConcerts', JSON.stringify(myConcerts))
+    }
+    if(wantToGoButton){
+            console.log("i WANT to go button clicked!")
+            console.log(wantToGoButton.dataset.id)
+
+            let selectedFutureConcert = concerts.find(concert => concert.id === wantToGoButton.dataset.id)
+            console.log("my future concert: ", selectedFutureConcert)
+
+            //checking if concert was already added (so button clicked before, prevents duplicates)
+            let existingFutureConcert = myFutureConcerts.find(myConcert => myConcert.id === wantToGoButton.dataset.id)
+            if(selectedFutureConcert && !existingFutureConcert){
+                myFutureConcerts.push(selectedFutureConcert)
+            }
+            localStorage.setItem('myFutureConcerts', JSON.stringify(myFutureConcerts))
+        }
+    })
+}
+
+//displaying grid on myConcerts page
+if(myConcertsGrid){
+    for (const myConcert of myConcerts) {
+        myConcertsGrid.insertAdjacentHTML('beforeend',createConcertCard(myConcert))
+    } 
+}
+
+//displaying grid on myWishlist page
+if(myWishlistGrid){
+    for (const myFutureConcert of myFutureConcerts) {
+        myWishlistGrid.insertAdjacentHTML('beforeend',createConcertCard(myFutureConcert))
+    } 
+}
