@@ -194,7 +194,14 @@ if(concertGrid){
             if(selectedConcert && !existingConcert){
                 myConcerts.push(selectedConcert)
             }
+
+            //removing concert from wishlist if it was on there before
+            if(selectedConcert){
+                myFutureConcerts = myFutureConcerts.filter(myConcert => myConcert.id !== selectedConcert.id)
+            }
+
             localStorage.setItem('myConcerts', JSON.stringify(myConcerts))
+            localStorage.setItem('myFutureConcerts', JSON.stringify(myFutureConcerts))
     }
     if(wantToGoButton){
             console.log("i WANT to go button clicked!")
@@ -208,6 +215,13 @@ if(concertGrid){
             if(selectedFutureConcert && !existingFutureConcert){
                 myFutureConcerts.push(selectedFutureConcert)
             }
+
+            //removing concert from myConcerts if wishlist button was pressed after
+            if(selectedFutureConcert){
+                myConcerts = myConcerts.filter(myConcert => myConcert.id !== selectedFutureConcert.id)
+            }
+
+            localStorage.setItem('myConcerts', JSON.stringify(myConcerts))
             localStorage.setItem('myFutureConcerts', JSON.stringify(myFutureConcerts))
         }
     })
