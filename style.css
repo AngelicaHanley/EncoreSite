@@ -113,7 +113,7 @@ h2 {
     color: var(--offWhite);
     font-size: clamp(10px, 1.2vw, 20px);
     font-weight: 1;
-    margin-bottom: 0px;
+    margin-bottom: 20px;
 }
 
 .concertForm {
@@ -214,7 +214,6 @@ h3 {
     display: inline-block;
 }
 .goingButton {
-    /*width: clamp(50px, 8vw, 200px);*/
     width: 50%;
     padding: 5px clamp(7px, 1.2vw, 15px);
     border: 3px solid var(--teal);
@@ -241,17 +240,28 @@ h3 {
     font-weight: bold;
 }
 .removeButton {
-    width: 70%;
-    margin-top: 10px;
+    width: 50%;
     padding: 10px 5px;
+    border: 3px solid var(--purple);
+    border-radius: 5px;
+    font-weight: bold;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
     gap: 3px;
-    border: 3px solid var(--purple);
+}
+.wishlistButton {
+    width: 50%;
+    padding: 10px 5px;
+    border: 3px solid var(--teal);
     border-radius: 5px;
     font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
 }
 
 
@@ -281,6 +291,14 @@ footer {
     .wantToGoButton {
         width: 100%;
         padding: 8px 0px;
+    }
+    .removeButton {
+        padding: 2px;
+        width: 100%;
+    }
+    .wishlistButton{
+        padding: 2px;
+        width: 100%;
     }
 }
 
