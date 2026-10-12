@@ -70,8 +70,8 @@ function createConcertCard(concert, page="discover"){
 
         <div class="concertCard__content">
             <h4>${name}</h4>
-            <p>${date}</p>
-            <p>${location}</p>
+            <p class="cardInfo">${date}</p>
+            <p class="cardInfo">${location}</p>
 
             <div class="concertCard__buttons">
                 ${buttonsHTML}
@@ -165,6 +165,20 @@ async function fetchConcerts(artist){
     }
     catch(err){
         console.log(err)
+        //clear prev concert results
+        concertGrid.innerHTML = ""
+
+        //remove any old message
+        const oldMessage = document.querySelector('.noneMessage')
+        if(oldMessage){
+            oldMessage.remove()
+        }
+        //show error message to user
+        const errorMessage = document.createElement('p')
+        errorMessage.classList.add('noneMessage')
+        errorMessage.textContent = "Sorry! Something went wrong while searching for concerts. Please try again!"
+        const concertSection = document.querySelector('.concertResults')
+        concertSection.appendChild(errorMessage)
     }
 }
 
@@ -184,7 +198,7 @@ const displayConcerts = (concerts) => {
         const noneMessage = document.createElement('p')
         concertSection.appendChild(noneMessage)
         noneMessage.classList.add('noneMessage');
-        noneMessage.textContent = "No concerts found, try again!!"
+        noneMessage.textContent = "No concerts found, please try again!"
         return
     }
 
@@ -213,41 +227,28 @@ if(concertGrid){
         const wantToGoButton = e.target.closest('.wantToGoButton')
     //storing concerts in myConcerts in local stoage
         if(goingButton){
-            goingButton.innerHTML = `<svg class="heartIcon" viewBox="0 -4 24 24" id="meteor-icon-kit__solid-checkmark" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.06066 6.4393C2.47487 5.85355 1.52513 5.85355 0.93934 6.4393C0.353553 7.0251 0.353553 7.9749 0.93934 8.5607L7.93934 15.5607C8.52513 16.1464 9.47487 16.1464 10.0607 15.5607L23.0607 2.56066C23.6464 1.97487 23.6464 1.02513 23.0607 0.43934C22.4749 -0.14645 21.5251 -0.14645 20.9393 0.43934L9 12.3787L3.06066 6.4393z" fill="currentColor"/></svg> I'm Going!`
-            
-            //reset the Want to Go button
-            const concertCard = goingButton.closest('.concertCard')
-            const wishlistButtonOnCard = concertCard.querySelector('.wantToGoButton')
-
-            wishlistButtonOnCard.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="heartIcon">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-            </svg> Want to Go`
+            const selectedConcert = concerts.find(concert => concert.id === goingButton.dataset.id)
+            const existingConcert = myConcerts.find(myConcert => myConcert.id === goingButton.dataset.id)
 
             console.log(goingButton.dataset.id)
-            let selectedConcert = concerts.find(concert => concert.id === goingButton.dataset.id)
             console.log("my concert: ", selectedConcert)
-            //checking if concert was already added (so button clicked before, prevents duplicates)
-            let existingConcert = myConcerts.find(myConcert => myConcert.id === goingButton.dataset.id)
-            if(selectedConcert && !existingConcert){
+            
+            if(existingConcert){
+                //second click of button = remove concert
+                myConcerts = myConcerts.filter(myConcert => myConcert.id !== goingButton.dataset.id)
+            }else if(selectedConcert){
+                //first button click = save concert
                 myConcerts.push(selectedConcert)
-            }
 
-            //removing concert from wishlist if it was on there before
-            if(selectedConcert){
+                //remove from wishlist if previously saved there
                 myWishlist = myWishlist.filter(myConcert => myConcert.id !== selectedConcert.id)
             }
 
             localStorage.setItem('myConcerts', JSON.stringify(myConcerts))
             localStorage.setItem('myWishlist', JSON.stringify(myWishlist))
+            displayConcerts(concerts)
     }
     if(wantToGoButton){
-            wantToGoButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heartIcon">
-                <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" /> </svg> Want to Go`
-            
-            //reset the I'm Going button, in case it was clicked before
-            const concertCard = wantToGoButton.closest('.concertCard')
-            const goingButtonOnCard = concertCard.querySelector('.goingButton')
-            goingButtonOnCard.textContent = "I'm Going"
 
             console.log(wantToGoButton.dataset.id)
 
@@ -256,17 +257,21 @@ if(concertGrid){
 
             //checking if concert was already added (so button clicked before, prevents duplicates)
             let existingWishlistConcert = myWishlist.find(myConcert => myConcert.id === wantToGoButton.dataset.id)
-            if(selectedWishlistConcert && !existingWishlistConcert){
+            
+            if(existingWishlistConcert){
+                //second click = remove concert from wishlist
+                myWishlist = myWishlist.filter(myConcert => myConcert.id !== wantToGoButton.dataset.id)
+            } else if(selectedWishlistConcert){
+                //first click = save concert to wishlist
                 myWishlist.push(selectedWishlistConcert)
-            }
 
-            //removing concert from myConcerts if wishlist button was pressed after
-            if(selectedWishlistConcert){
+                //remove from it if previously saved there
                 myConcerts = myConcerts.filter(myConcert => myConcert.id !== selectedWishlistConcert.id)
             }
 
             localStorage.setItem('myConcerts', JSON.stringify(myConcerts))
             localStorage.setItem('myWishlist', JSON.stringify(myWishlist))
+            displayConcerts(concerts)
         }
     })
 }
