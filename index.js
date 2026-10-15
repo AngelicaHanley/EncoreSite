@@ -1,5 +1,3 @@
-//API key: BHiDDr29kRGAiicdtwFIvIM20Hmg9Bzr
-//https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&countryCode=US&size=5&apikey=BHiDDr29kRGAiicdtwFIvIM20Hmg9Bzr
 
 //data
 const concertGrid = document.querySelector('#discoverGrid')
@@ -21,7 +19,7 @@ if(savedWishlist){
 
 // Creating concert card!
 function createConcertCard(concert, page="discover"){
-    //Destructing Concert Object Here! ! !
+    //Destructuring concert object to access its properties!
     const { name, date, venue, city, image, id} = concert;
 
     //check if concert is already saved in either list
@@ -42,13 +40,13 @@ function createConcertCard(concert, page="discover"){
     //changing buttons depending on if our data contains that concert already or not
     if(page === "discover"){
         if(existingWishlistConcert){
-            wishlistButtonHTML = `<button class="wantToGoButton" data-id="${id}">
+            wishlistButtonHTML = `<button class="wishlistButton" data-id="${id}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="heartIcon">
                     <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052a5.5 5.5 0 0 1 4.313-2.052c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
                 </svg> Want to Go
             </button>`
         }else{
-            wishlistButtonHTML = `<button class="wantToGoButton" data-id="${id}">
+            wishlistButtonHTML = `<button class="wishlistButton" data-id="${id}">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="heartIcon">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                 </svg> Want to Go
@@ -66,7 +64,7 @@ function createConcertCard(concert, page="discover"){
     }else if (page === "wishlist"){
         buttonsHTML = `<button class="goingButton" data-id="${id}">I'm Going</button> <button class="removeButton" data-id="${id}">Remove</button>`
     }
-
+    //creating concert card HTML here
     const myHTMLString = 
     `<article class="concertCard">
         <img class="concertCard__image" src="${image}" alt="">
@@ -90,13 +88,13 @@ if(form){
     form.onsubmit = function(e){
     e.preventDefault()
     const input = this.artist.value.trim()
-    console.log("input: "+input)
     this.artist.value = ""
     //call search API function here
     fetchConcerts(input)
     }
 }
 
+//fetching from Ticketmaster API
 async function fetchConcerts(artist){
     const url = `https://app.ticketmaster.com/discovery/v2/events.json?keyword=${encodeURIComponent(artist)}&classificationName=music&size=50&apikey=BHiDDr29kRGAiicdtwFIvIM20Hmg9Bzr`
     try{
@@ -106,16 +104,16 @@ async function fetchConcerts(artist){
         }
         const data = await response.json();
 
-        //if there is an _embedded there we get the data
+        //retrieve events if the API response contains event data, so if there is _embedded then we get the data
         let events
         if(data._embedded){
             events = data._embedded.events;
         } else{
             events = []
         }
-
+        //converting Ticketmaster API events into concert objects
         concerts = events.map(event => {
-            //edge cases code
+            //edge cases code, handling any missing concer info
             let date
             let venue
             let image
@@ -164,7 +162,6 @@ async function fetchConcerts(artist){
             };
         });
         displayConcerts(concerts);
-        console.log(concerts);
     }
     catch(err){
         console.log(err)
@@ -204,12 +201,13 @@ const displayConcerts = (concerts) => {
         noneMessage.textContent = "No concerts found, please try again!"
         return
     }
-
+    //displaying all of the concerts from the list!
     for (const concert of concerts) {
         concertGrid.insertAdjacentHTML('beforeend',createConcertCard(concert))
     }
 }
 
+//formatting concert date
 function formatDate(myDate) {
     const [year, month, day] = myDate.split('-');
     const date = new Date(year, month - 1, day);
@@ -225,16 +223,13 @@ function formatDate(myDate) {
 if(concertGrid){
     //event listener for going and want to go buttons, connected to concert grid so listens to all buttons
     concertGrid.addEventListener('click',function(e){
-        //e.target identifies the element that was clicked
+        //e.target identifies the element that was clicked, so gets the closest button of the click
         const goingButton = e.target.closest('.goingButton')
-        const wantToGoButton = e.target.closest('.wantToGoButton')
-    //storing concerts in myConcerts in local stoage
+        const wishlistButton = e.target.closest('.wishlistButton')
+        //going button features
         if(goingButton){
             const selectedConcert = concerts.find(concert => concert.id === goingButton.dataset.id)
             const existingConcert = myConcerts.find(myConcert => myConcert.id === goingButton.dataset.id)
-
-            console.log(goingButton.dataset.id)
-            console.log("my concert: ", selectedConcert)
             
             if(existingConcert){
                 //second click of button = remove concert
@@ -243,39 +238,37 @@ if(concertGrid){
                 //first button click = save concert
                 myConcerts.push(selectedConcert)
 
-                //remove from wishlist if previously saved there
+                //remove from wishlist if it was previously saved there
                 myWishlist = myWishlist.filter(myConcert => myConcert.id !== selectedConcert.id)
             }
-
+            //updating local storage and refreshing concerts shown
             localStorage.setItem('myConcerts', JSON.stringify(myConcerts))
             localStorage.setItem('myWishlist', JSON.stringify(myWishlist))
             displayConcerts(concerts)
         }
-        if(wantToGoButton){
+        //wishlist button features
+        if(wishlistButton){
 
-                console.log(wantToGoButton.dataset.id)
+            let selectedWishlistConcert = concerts.find(concert => concert.id === wishlistButton.dataset.id)
 
-                let selectedWishlistConcert = concerts.find(concert => concert.id === wantToGoButton.dataset.id)
-                console.log("my wishlist concert: ", selectedWishlistConcert)
+            //checking if concert was already added (so button clicked before, prevents duplicates)
+            let existingWishlistConcert = myWishlist.find(myConcert => myConcert.id === wishlistButton.dataset.id)
+            
+            if(existingWishlistConcert){
+                //second click = remove concert from wishlist
+                myWishlist = myWishlist.filter(myConcert => myConcert.id !== wishlistButton.dataset.id)
+            } else if(selectedWishlistConcert){
+                //first click = save concert to wishlist
+                myWishlist.push(selectedWishlistConcert)
 
-                //checking if concert was already added (so button clicked before, prevents duplicates)
-                let existingWishlistConcert = myWishlist.find(myConcert => myConcert.id === wantToGoButton.dataset.id)
-                
-                if(existingWishlistConcert){
-                    //second click = remove concert from wishlist
-                    myWishlist = myWishlist.filter(myConcert => myConcert.id !== wantToGoButton.dataset.id)
-                } else if(selectedWishlistConcert){
-                    //first click = save concert to wishlist
-                    myWishlist.push(selectedWishlistConcert)
-
-                    //remove from it if previously saved there
-                    myConcerts = myConcerts.filter(myConcert => myConcert.id !== selectedWishlistConcert.id)
-                }
-
-                localStorage.setItem('myConcerts', JSON.stringify(myConcerts))
-                localStorage.setItem('myWishlist', JSON.stringify(myWishlist))
-                displayConcerts(concerts)
+                //remove the concert from my concerts if it was previously saved there
+                myConcerts = myConcerts.filter(myConcert => myConcert.id !== selectedWishlistConcert.id)
             }
+            //updating local storage and refreshing concerts shown
+            localStorage.setItem('myConcerts', JSON.stringify(myConcerts))
+            localStorage.setItem('myWishlist', JSON.stringify(myWishlist))
+            displayConcerts(concerts)
+        }
     })
 }
 
@@ -313,6 +306,7 @@ if(myConcertsGrid){
             noneSavedMessage.textContent = "You haven't saved any concerts yet. Head to Discover to find your next show!"
         }
         }
+        //wishlist button functionality
         if(wishlistButton){
             const selectedConcert = myConcerts.find(concert => concert.id === wishlistButton.dataset.id)
             if(selectedConcert){
