@@ -19,9 +19,9 @@ if(savedWishlist){
 }
 
 
-/* Creating concert card! */
+// Creating concert card!
 function createConcertCard(concert, page="discover"){
-    /* Destructing Concert Object Here! ! !*/
+    //Destructing Concert Object Here! ! !
     const { name, date, venue, city, image, id} = concert;
 
     //check if concert is already saved in either list
@@ -69,7 +69,7 @@ function createConcertCard(concert, page="discover"){
 
     const myHTMLString = 
     `<article class="concertCard">
-        <img class="concertCard__image" src="${image}" alt="Concert image">
+        <img class="concertCard__image" src="${image}" alt="">
 
         <div class="concertCard__content">
             <h4>${name}</h4>
