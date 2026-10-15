@@ -37,6 +37,7 @@ button:active {
 
 a {
     cursor: pointer;
+    color: var(--lightBlack);
 }
 
 .appTitle {
