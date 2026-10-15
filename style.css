@@ -31,13 +31,17 @@ header {
     align-items: center;
 }
 
+button {
+    color: var(--lightBlack);
+}
+
 button:active {
     transform: scale(0.96);
+    color: var(--lightBlack);
 }
 
 a {
     cursor: pointer;
-    color: var(--lightBlack);
 }
 
 .appTitle {
@@ -284,7 +288,7 @@ footer {
 
 /*tablet breakpoints*/
 @media screen and (max-width: 1200px){
-    .main{
+    main{
         justify-content: flex-start;
     }
     .concertGrid {
