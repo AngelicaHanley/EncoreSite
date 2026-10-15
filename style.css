@@ -284,6 +284,9 @@ footer {
 
 /*tablet breakpoints*/
 @media screen and (max-width: 1200px){
+    .main{
+        justify-content: flex-start;
+    }
     .concertGrid {
         grid-template-columns: repeat(2, 1fr);
         max-width: 750px;
@@ -317,6 +320,7 @@ footer {
     main {
         padding: 20px;
         align-items: stretch;
+        justify-content: flex-start;
     }
     .concertGrid {
         grid-template-columns: 1fr;
